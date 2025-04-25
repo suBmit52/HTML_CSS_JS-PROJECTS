@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="red-circle"></div>
+    <div class="blue-circle"></div>
+    <div class="card-container">
+        <img src="user-cover-2.png" alt="">
+        <h2>Gaurav Chavan</h2>
+        <p>Student</p>
+        <div class="button-container">
+            <button onclick="OpenModal()">Share My Profile</button>
+            <button>Follow Me</button>
+        </div>
+    </div>
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Share My Profile</h2>
+            <button onclick="CloseModal()">X</button>
+        </div>
+        <p>Share this Via</p>
+        <div>
+            <div class="icon-container">
+                <a href="#" class="icon" id="facebook">
+                    <img src="facebook.png" alt="">
+                </a>
+                <a href="#" class="icon" id="instagram">
+                    <img src="instagram.png" alt="">
+                </a>
+                <a href="#" class="icon" id="twitter">
+                    <img src="social.png" alt="">
+                </a>
+                <a href="#" class="icon" id="github" onc>
+                    <img src="github.png" alt="">
+                </a>
+                <a href="#" class="icon" id="whatsapp">
+                    <img src="whatsapp.png" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" onclick="CloseModal()">
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

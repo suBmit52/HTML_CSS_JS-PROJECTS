@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ATS Resume Score Checker with File Upload</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.5.1/mammoth.browser.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+    textarea, input[type="file"] { width: 100%; margin: 10px 0; padding: 10px; }
+    button { padding: 10px 20px; font-size: 16px; }
+    .result { margin-top: 20px; background: white; padding: 20px; border-radius: 10px; }
+  </style>
+</head>
+<body>
+
+  <h2 style="color: black;">ATS Resume Score Checker</h2>
+
+  <label>Upload Resume (PDF or DOCX):</label>
+  <input type="file" id="resumeFile" accept=".pdf,.docx">
+
+  <label>Job Description:</label>
+  <textarea id="jobDescription" placeholder="Paste job description here..."></textarea>
+
+  <button onclick="processFile()">Check ATS Score</button>
+
+  <div class="result" id="result" style="display:none;"></div>
+
+  <script>
+
+  const importantSkills = {
+    "javascript": 3,
+    "node.js": 3,
+    "react": 3,
+    "mongodb": 3,
+    "express": 3,
+    "api": 2,
+    "communication": 2,
+    "teamwork": 2,
+    "problem-solving": 2,
+    "html": 2,
+    "css": 2
+  };
+
+  function extractKeywords(text) {
+    return text
+      .toLowerCase()
+      .match(/\b([a-z\.\-]{3,})\b/g) || []
+      .filter((word, index, arr) => arr.indexOf(word) === index);
+  }
+
+  function calculateATSScore(resumeText, jobText) {
+    const resumeWords = extractKeywords(resumeText);
+    const jobWords = extractKeywords(jobText);
+
+    let score = 0;
+    let totalPossible = 0;
+    let matchedKeywords = [];
+
+    jobWords.forEach(word => {
+      const weight = importantSkills[word] || 1;
+      totalPossible += weight;
+      if (resumeWords.includes(word)) {
+        score += weight;
+        matchedKeywords.push(word);
+      }
+    });
+
+    // Formatting checks (simple bonus system)
+    let formatBonus = 0;
+    if (resumeText.includes("•") || resumeText.includes("-")) formatBonus += 5;
+    if (/experience|education|projects|skills/i.test(resumeText)) formatBonus += 5;
+    if (/[A-Z]{1}[a-z]+\s[A-Z]{1}[a-z]+/.test(resumeText)) formatBonus += 5;
+
+    const percentageScore = ((score / totalPossible) * 100) + formatBonus;
+
+    return {
+      matchedKeywords,
+      score: Math.min(percentageScore.toFixed(2), 100),
+      formatBonus
+    };
+  }
+
+  async function processFile() {
+    const file = document.getElementById("resumeFile").files[0];
+    const jobText = document.getElementById("jobDescription").value;
+
+    if (!file || !jobText) {
+      alert("Please upload a resume and enter a job description.");
+      return;
+    }
+
+    let resumeText = '';
+
+    if (file.type === "application/pdf") {
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const typedarray = new Uint8Array(this.result);
+        const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          resumeText += content.items.map(item => item.str).join(' ') + ' ';
+        }
+        displayScore(resumeText, jobText);
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (file.name.endsWith(".docx")) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        mammoth.extractRawText({ arrayBuffer: event.target.result })
+          .then(result => displayScore(result.value, jobText))
+          .catch(err => alert("Error reading DOCX file"));
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      alert("Unsupported file type.");
+    }
+  }
+
+  function displayScore(resumeText, jobText) {
+    const result = calculateATSScore(resumeText, jobText);
+    const resultBox = document.getElementById("result");
+    resultBox.innerHTML = `
+      <h3>ATS Score: ${result.score}%</h3>
+      <p><strong>Matched Keywords (Weighted):</strong> ${result.matchedKeywords.join(', ')}</p>
+      <p><strong>Formatting Bonus:</strong> ${result.formatBonus} pts</p>
+    `;
+    resultBox.style.display = "block";
+  }
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    overflow: hidden; /* prevent extra scroll */
+    font-family: sans-serif;
+  }
+
+.main_div{
+    width: 100%;
+    height: 100%;
+    background-color: #344151;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    /* overflow: hidden; */
+}
+
+.icon_div{
+    display: flex;
+    background-color: white;
+    font-size: 25px;
+    color: #344151;
+    /* border-radius: 10px; */
+    gap: 25px;
+    padding: 5px 3px;
+
+}
+
+/* button{
+    border: white;
+} */
+
+.text_div{
+    color: #0398d4;
+    font-size: 20px;
+}
+
+.left-btn{
+    padding: 0px 15px 0px 10px;
+    border: none; /* removes all default borders */
+    border-right: 2px solid #bfbfbf; /* only left border */
+    /* background-color: #556; */
+    /* color: white; */
+    border-radius: 2px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: white;
+        
+}
+
+.right-btn{
+    padding: 0px 10px 0px 15px;
+    border: none; /* removes all default borders */
+    border-left: 2px solid #bfbfbf; /* only left border */
+    /* background-color: #556; */
+    /* color: white; */
+    border-radius: 2px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: white;
+}
